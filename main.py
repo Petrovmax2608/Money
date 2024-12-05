@@ -2,14 +2,14 @@ from telegram import (
     Update,
     InlineQueryResultArticle,
     InputTextMessageContent,
-    InputMediaPhoto,
 )
 from telegram.ext import (
     ApplicationBuilder,
     CommandHandler,
     InlineQueryHandler,
+    MessageHandler,
+    filters,
     CallbackContext,
-    CallbackQueryHandler,
 )
 import random
 import logging
@@ -43,30 +43,31 @@ async def inline_query(update: Update, context: CallbackContext):
         logger.error(f"Ошибка при обработке inline-запроса: {e}")
         await update.inline_query.answer([])  # Отправляем пустой ответ в случае ошибки
 
-async def handle_message(update: Update, context: CallbackContext):
-    """Обновляет сообщение после выбора монетки"""
-    try:
-        # Задержка перед отправкой результата
-        await asyncio.sleep(2)
+async def handle_coin_flip_message(update: Update, context: CallbackContext):
+    """Обрабатываем сообщение с текстом 'Подбрасываем монетку...'"""
+    if update.message.text == "Подбрасываем монетку... 🪙":
+        try:
+            # Задержка перед отправкой результата
+            await asyncio.sleep(2)
 
-        # Результат подбрасывания монетки
-        result = random.choice(["yes", "no"])
-        image_url = YES_IMAGE if result == "yes" else NO_IMAGE
-        title = "Да" if result == "yes" else "Нет"
+            # Результат подбрасывания монетки
+            result = random.choice(["yes", "no"])
+            image_url = YES_IMAGE if result == "yes" else NO_IMAGE
+            title = "Да" if result == "yes" else "Нет"
 
-        # Обновляем сообщение с результатом
-        await update.message.reply_photo(
-            photo=image_url,
-            caption=f"<b>Монетка говорит:</b> {title}!",
-            parse_mode="HTML"
-        )
-    except Exception as e:
-        logger.error(f"Ошибка при отправке результата: {e}")
+            # Отправляем картинку с результатом
+            await update.message.reply_photo(
+                photo=image_url,
+                caption=f"<b>Монетка говорит:</b> {title}!",
+                parse_mode="HTML"
+            )
+        except Exception as e:
+            logger.error(f"Ошибка при отправке результата: {e}")
 
 async def start(update: Update, context: CallbackContext):
     """Обработка команды /start"""
     await update.message.reply_text(
-        "Привет! Используй @babloro_bot, чтобы подбросить монетку."
+        "Привет! Используй @<имя_бота>, чтобы подбросить монетку."
     )
 
 def main():
@@ -77,7 +78,7 @@ def main():
     # Добавляем обработчики
     application.add_handler(CommandHandler("start", start))
     application.add_handler(InlineQueryHandler(inline_query))
-    application.add_handler(CallbackQueryHandler(handle_message))
+    application.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, handle_coin_flip_message))
 
     # Запуск бота
     application.run_polling()
