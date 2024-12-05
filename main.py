@@ -14,8 +14,8 @@ logging.basicConfig(format="%(asctime)s - %(name)s - %(levelname)s - %(message)s
 logger = logging.getLogger(__name__)
 
 # URL для заблюренных изображений
-YES_IMAGE = "https://nklk.ru/dll_image/4738.png" 
-NO_IMAGE = "https://nklk.ru/dll_image/4739.png"   
+YES_IMAGE = "https://nklk.ru/dll_image/4738.png"  # Замените на URL заблюренной картинки "Да"
+NO_IMAGE = "https://nklk.ru/dll_image/4739.png"   # Замените на URL заблюренной картинки "Нет"
 
 async def inline_query(update: Update, context: CallbackContext):
     """Обработка inline-запросов"""
@@ -27,7 +27,7 @@ async def inline_query(update: Update, context: CallbackContext):
                 title="Подбросить монетку",
                 input_message_content=InputTextMessageContent(
                     "Подбрасываем монетку... 🪙", parse_mode="HTML"
-                ),  # Скрытый текст при отправке
+                ),  # Сообщение при отправке
             )
         ]
 
@@ -36,23 +36,20 @@ async def inline_query(update: Update, context: CallbackContext):
         logger.error(f"Ошибка при обработке inline-запроса: {e}")
         await update.inline_query.answer([])  # Отправляем пустой ответ в случае ошибки
 
-async def send_coin_result(update: Update, context: CallbackContext):
-    """Отправляет результат подбрасывания монетки"""
+async def handle_result(update: Update, context: CallbackContext):
+    """Обновление сообщения с результатом"""
     try:
         # Результат подбрасывания монетки
         result = random.choice(["yes", "no"])
         image_url = YES_IMAGE if result == "yes" else NO_IMAGE
         title = "Да" if result == "yes" else "Нет"
 
-        # Отправляем картинку с текстом
-        await update.message.reply_photo(
-            photo=image_url,
-            caption=f"<b>Монетка говорит:</b> {title}!",
-            parse_mode="HTML",
+        # Обновляем сообщение с изображением и результатом
+        await update.effective_message.edit_media(
+            media=InputMediaPhoto(media=image_url, caption=f"<b>Монетка говорит:</b> {title}!", parse_mode="HTML")
         )
     except Exception as e:
-        logger.error(f"Ошибка при отправке результата: {e}")
-        await update.message.reply_text("Произошла ошибка. Попробуйте снова!")
+        logger.error(f"Ошибка при обновлении сообщения: {e}")
 
 async def start(update: Update, context: CallbackContext):
     """Обработка команды /start"""
@@ -68,7 +65,6 @@ def main():
     # Добавляем обработчики
     application.add_handler(CommandHandler("start", start))
     application.add_handler(InlineQueryHandler(inline_query))
-    application.add_handler(CommandHandler("flip", send_coin_result))  # Команда для ручного теста
 
     # Запуск бота
     application.run_polling()
