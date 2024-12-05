@@ -37,6 +37,25 @@ async def fetch_random_gif_url():
         logger.error(f"Ошибка при запросе к Giphy API: {e}")
         return None
 
+async def inline_query(update: Update, context: CallbackContext):
+    """Обработка inline-запросов"""
+    try:
+        query = update.inline_query.query
+        results = []
+
+        if query:  # Если есть запрос
+            results.append(InlineQueryResultArticle(
+                id=str(uuid.uuid4()),  # Уникальный ID запроса
+                title="Подбросить монетку",  # Заголовок
+                input_message_content=InputTextMessageContent("Подбрасываем монетку... 🪙")  # Текст ответа
+            ))
+
+        # Отправляем инлайн-результаты
+        await update.inline_query.answer(results, cache_time=0)
+    except Exception as e:
+        logger.error(f"Ошибка при обработке inline запроса: {e}")
+        await update.inline_query.answer([])  # Пустой ответ в случае ошибки
+
 async def handle_coin_flip_message(update: Update, context: CallbackContext):
     """Обрабатываем сообщение с текстом 'Подбрасываем монетку...'"""
     if update.message.text == "Подбрасываем монетку... 🪙":
@@ -66,6 +85,7 @@ def main():
 
     # Добавляем обработчики
     application.add_handler(CommandHandler("start", start))
+    application.add_handler(InlineQueryHandler(inline_query))  # Обработчик инлайн-запросов
     application.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, handle_coin_flip_message))
 
     # Запуск бота
