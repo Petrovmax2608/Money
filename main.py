@@ -21,8 +21,8 @@ logging.basicConfig(format="%(asctime)s - %(name)s - %(levelname)s - %(message)s
 logger = logging.getLogger(__name__)
 
 # URL для заблюренных изображений
-YES_IMAGE = "https://nklk.ru/dll_image/4738.png"  # URL для результата "Да"
-NO_IMAGE = "https://nklk.ru/dll_image/4739.png"   # URL для результата "Нет"
+YES_IMAGE = "https://nklk.ru/dll_image/4738.png"
+NO_IMAGE = "https://nklk.ru/dll_image/4739.png"
 
 async def inline_query(update: Update, context: CallbackContext):
     """Обработка inline-запросов"""
@@ -48,7 +48,7 @@ async def handle_coin_flip_message(update: Update, context: CallbackContext):
     if update.message.text == "Подбрасываем монетку... 🪙":
         try:
             # Задержка перед отправкой результата
-            await asyncio.sleep(2)
+            await asyncio.sleep(1)
 
             # Результат подбрасывания монетки
             result = random.choice(["yes", "no"])
@@ -67,7 +67,7 @@ async def handle_coin_flip_message(update: Update, context: CallbackContext):
 async def start(update: Update, context: CallbackContext):
     """Обработка команды /start"""
     await update.message.reply_text(
-        "Привет! Используй @<имя_бота>, чтобы подбросить монетку."
+        "Введи @babloro_bot, чтобы подбросить монетку."
     )
 
 def main():
