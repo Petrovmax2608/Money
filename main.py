@@ -1,38 +1,47 @@
 from telegram import Update, InlineQueryResultPhoto
 from telegram.ext import ApplicationBuilder, CommandHandler, InlineQueryHandler, CallbackContext
 import random
+import logging
+
+# Настройка логирования
+logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+                    level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 # Укажите правильные URL для изображений из вашего репозитория GitHub
-YES_IMAGE = "https://github.com/Petrovmax2608/Money/blob/main/yes.png?raw=true"
-NO_IMAGE = "https://github.com/Petrovmax2608/Money/blob/main/no.png?raw=true"
+YES_IMAGE = "https://raw.githubusercontent.com/Petrovmax2608/Money/main/yes.png"
+NO_IMAGE = "https://raw.githubusercontent.com/Petrovmax2608/Money/main/no.png"
 
 async def inline_query(update: Update, context: CallbackContext):
     """Обработка inline-запросов"""
-    query = update.inline_query.query
+    try:
+        # Результат подбрасывания монетки
+        result = random.choice(["yes", "no"])
+        image_url = YES_IMAGE if result == "yes" else NO_IMAGE
+        title = "Да" if result == "yes" else "Нет"
 
-    # Результат подбрасывания монетки
-    result = random.choice(["yes", "no"])
-    image_url = YES_IMAGE if result == "yes" else NO_IMAGE
-    title = "Да" if result == "yes" else "Нет"
-
-    # Создаем результат для отправки
-    results = [
-        InlineQueryResultPhoto(
-            id="1",
-            title=title,
-            photo_url=image_url,
-            thumbnail_url=image_url,  # Добавляем миниатюру
-            caption=f"Монетка говорит: {title}!"
-        )
-    ]
-
-    await update.inline_query.answer(results, cache_time=0)
+        # Создаем результат для отправки
+        results = [
+            InlineQueryResultPhoto(
+                id="1",
+                title=title,
+                photo_url=image_url,
+                thumbnail_url=image_url,  # Добавляем миниатюру
+                caption=f"Монетка говорит: {title}!"
+            )
+        ]
+        
+        await update.inline_query.answer(results, cache_time=0)
+    except Exception as e:
+        logger.error(f"Ошибка при обработке inline запроса: {e}")
+        await update.inline_query.answer([])  # Отправляем пустой ответ в случае ошибки
 
 async def start(update: Update, context: CallbackContext):
     """Обработка команды /start"""
     await update.message.reply_text("Привет! Используй @<имя_бота>, чтобы подбросить монетку.")
 
 def main():
+    """Основная функция для запуска бота"""
     # Замените 'YOUR_TOKEN' на токен вашего бота
     application = ApplicationBuilder().token("7919456091:AAHMc4yNQDvyh_nuTH8MdIiGM-8werbXuNE").build()
 
