@@ -41,18 +41,25 @@ async def inline_query(update: Update, context: CallbackContext):
     try:
         query = update.inline_query.query
         logger.info(f"Получен инлайн-запрос: {query}")  # Логируем запрос
+        
+        # Если запрос пустой, не отправляем результаты
+        if not query:
+            await update.inline_query.answer([])
+            return
+        
         results = []
-
-        if query:  # Если есть запрос
-            # Отправляем результат для инлайн-кнопки
-            results.append(InlineQueryResultArticle(
-                id=str(uuid.uuid4()),  # Уникальный ID запроса
-                title="Подбросить монетку",  # Заголовок
-                input_message_content=InputTextMessageContent("Подбрасываем монетку... 🪙")  # Текст ответа
-            ))
+        
+        # Отправляем результат для инлайн-кнопки
+        results.append(InlineQueryResultArticle(
+            id=str(uuid.uuid4()),  # Уникальный ID запроса
+            title="Подбросить монетку",  # Заголовок
+            input_message_content=InputTextMessageContent("Подбрасываем монетку... 🪙")  # Текст ответа
+        ))
 
         # Отправляем инлайн-результаты
         await update.inline_query.answer(results, cache_time=0)
+        logger.info("Отправлен ответ на инлайн-запрос")
+
     except Exception as e:
         logger.error(f"Ошибка при обработке inline запроса: {e}")
         await update.inline_query.answer([])  # Пустой ответ в случае ошибки
