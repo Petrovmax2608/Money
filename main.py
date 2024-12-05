@@ -21,7 +21,6 @@ async def inline_query(update: Update, context: CallbackContext):
             id="1",
             title=title,
             photo_url=image_url,
-            thumb_url=image_url,
             caption=f"Монетка говорит: {title}!"
         )
     ]
