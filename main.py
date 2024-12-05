@@ -9,8 +9,8 @@ logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s
 logger = logging.getLogger(__name__)
 
 # Укажите правильные URL для изображений из вашего репозитория GitHub
-YES_IMAGE = "https://github.com/Petrovmax2608/Money/yes.png"
-NO_IMAGE = "https://github.com/Petrovmax2608/Money/no.png"
+YES_IMAGE = "https://i0.wp.com/bariatric.ru/su_sv/wp-content/uploads/2017/10/yes.png?fit=700%2C300&amp;ssl=1&amp;w=640"
+NO_IMAGE = "https://nklk.ru/dll_image/4738.png"
 
 async def inline_query(update: Update, context: CallbackContext):
     """Обработка inline-запросов"""
