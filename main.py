@@ -30,12 +30,19 @@ async def fetch_random_gif_url():
     try:
         async with aiohttp.ClientSession() as session:
             async with session.get(GIPHY_RANDOM_URL) as response:
-                response.raise_for_status()
+                # Логирование статуса ответа
+                logger.info(f"Статус ответа от Giphy: {response.status}")
+                response.raise_for_status()  # Поднимет исключение при ошибке HTTP
+
                 data = await response.json()
 
-                # Проверяем, что данные приходят в нужном формате
+                # Логируем полученные данные
+                logger.info(f"Ответ от Giphy: {data}")
+
+                # Проверяем наличие данных и их структуру
                 if "data" in data and len(data["data"]) > 0:
                     gif_url = data["data"][0]["images"]["original"]["url"]
+                    logger.info(f"Получена ссылка на GIF: {gif_url}")
                     return gif_url
                 else:
                     logger.error("Ответ от Giphy не содержит данных или пустой массив.")
