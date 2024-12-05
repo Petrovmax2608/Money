@@ -61,7 +61,7 @@ async def start(update: Update, context: CallbackContext):
 
 def main():
     """Основная функция для запуска бота"""
-    application = ApplicationBuilder().token("ВАШ_ТОКЕН_БОТА").build()
+    application = ApplicationBuilder().token("7919456091:AAHMc4yNQDvyh_nuTH8MdIiGM-8werbXuNE").build()
 
     # Добавляем обработчики
     application.add_handler(CommandHandler("start", start))
