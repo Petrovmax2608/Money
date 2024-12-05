@@ -1,7 +1,7 @@
 import random
 import logging
 import asyncio
-import aiohttp
+import aiohttp  # Используем асинхронную библиотеку для запросов
 import uuid
 from telegram import (
     Update,
@@ -40,30 +40,21 @@ async def fetch_random_gif_url():
 async def inline_query(update: Update, context: CallbackContext):
     """Обработка inline-запросов"""
     try:
-        query = update.inline_query.query
-        if query.lower() == "монетка":
-            # Получаем случайный GIF
-            gif_url = await fetch_random_gif_url()
-            if gif_url:
-                # Создаем инлайн-результат
-                results = [
-                    InlineQueryResultArticle(
-                        id=str(uuid.uuid4()),  # Уникальный идентификатор
-                        title="Подбросить монетку",
-                        input_message_content=InputTextMessageContent(
-                            "Подбрасываем монетку... 🪙", parse_mode="HTML"
-                        ),
-                        thumb_url=gif_url,  # Превью гифки
-                        description="Подбросьте монетку"
-                    )
-                ]
-                # Отправляем инлайн-результат
-                await update.inline_query.answer(results, cache_time=0)
-            else:
-                # Ответ если нет гифки
-                await update.inline_query.answer([])
+        # Создаем инлайн-результат с текстом "Подбросить монетку"
+        results = [
+            InlineQueryResultArticle(
+                id=str(uuid.uuid4()),  # Уникальный идентификатор
+                title="Подбросить монетку",
+                input_message_content=InputTextMessageContent(
+                    "Подбрасываем монетку... 🪙", parse_mode="HTML"
+                ),
+            )
+        ]
+
+        await update.inline_query.answer(results, cache_time=0, is_personal=True)
     except Exception as e:
         logger.error(f"Ошибка при обработке inline-запроса: {e}")
+        await update.inline_query.answer([])  # Отправляем пустой ответ в случае ошибки
 
 async def handle_coin_flip_message(update: Update, context: CallbackContext):
     """Обрабатываем сообщение с текстом 'Подбрасываем монетку...'"""
@@ -94,7 +85,7 @@ def main():
 
     # Добавляем обработчики
     application.add_handler(CommandHandler("start", start))
-    application.add_handler(InlineQueryHandler(inline_query))  # Обработчик инлайн-запроса
+    application.add_handler(InlineQueryHandler(inline_query))
     application.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, handle_coin_flip_message))
 
     # Запуск бота
