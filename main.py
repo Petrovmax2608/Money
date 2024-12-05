@@ -8,6 +8,7 @@ from telegram.ext import ApplicationBuilder, CommandHandler, InlineQueryHandler,
 import random
 import logging
 import uuid
+import asyncio  # Для добавления задержки
 
 # Настройка логирования
 logging.basicConfig(format="%(asctime)s - %(name)s - %(levelname)s - %(message)s", level=logging.INFO)
@@ -39,6 +40,9 @@ async def inline_query(update: Update, context: CallbackContext):
 async def handle_result(update: Update, context: CallbackContext):
     """Обновление сообщения с результатом"""
     try:
+        # Задержка перед обновлением результата
+        await asyncio.sleep(2)  # Задержка в 2 секунды
+
         # Результат подбрасывания монетки
         result = random.choice(["yes", "no"])
         image_url = YES_IMAGE if result == "yes" else NO_IMAGE
