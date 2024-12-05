@@ -1,7 +1,7 @@
 import random
 import logging
 import asyncio
-import requests
+import aiohttp  # Используем асинхронную библиотеку для запросов
 import uuid
 from telegram import (
     Update,
@@ -28,10 +28,11 @@ GIPHY_RANDOM_URL = f"https://api.giphy.com/v1/gifs/random?api_key={GIPHY_API_KEY
 async def fetch_random_gif_url():
     """Получить случайный GIF через API Giphy"""
     try:
-        response = requests.get(GIPHY_RANDOM_URL)
-        response.raise_for_status()
-        data = response.json()
-        return data["data"]["images"]["original"]["url"]
+        async with aiohttp.ClientSession() as session:
+            async with session.get(GIPHY_RANDOM_URL) as response:
+                response.raise_for_status()
+                data = await response.json()
+                return data["data"][0]["images"]["original"]["url"]
     except Exception as e:
         logger.error(f"Ошибка при запросе к Giphy API: {e}")
         return None
