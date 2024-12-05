@@ -23,7 +23,7 @@ logger = logging.getLogger(__name__)
 
 # Giphy API
 GIPHY_API_KEY = "ebUU78UvD6s5vr09ODs1qGdEsAvAyFfc"
-GIPHY_RANDOM_URL = f"https://api.giphy.com/v1/gifs/random?api_key={GIPHY_API_KEY}&tag=money"
+GIPHY_RANDOM_URL = f"https://api.giphy.com/v1/gifs/random?api_key={GIPHY_API_KEY}&tag=coin&rating=g"
 
 async def fetch_random_gif_url():
     """Получить случайный GIF через API Giphy"""
