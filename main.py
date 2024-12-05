@@ -1,7 +1,7 @@
 import random
 import logging
 import asyncio
-import aiohttp  # Используем асинхронную библиотеку для запросов
+import aiohttp
 import uuid
 from telegram import (
     Update,
@@ -17,6 +17,7 @@ from telegram.ext import (
     CallbackContext,
 )
 
+# Настройка логирования
 logging.basicConfig(format="%(asctime)s - %(name)s - %(levelname)s - %(message)s", level=logging.INFO)
 logger = logging.getLogger(__name__)
 
@@ -40,29 +41,29 @@ async def inline_query(update: Update, context: CallbackContext):
     """Обработка inline-запросов"""
     try:
         query = update.inline_query.query
-        logger.info(f"Получен инлайн-запрос: {query}")  # Логируем запрос
-        
-        # Если запрос пустой, не отправляем результаты
-        if not query:
-            await update.inline_query.answer([])
-            return
-
-        results = []
-        
-        # Заготовим результат для инлайн-запроса
-        results.append(InlineQueryResultArticle(
-            id=str(uuid.uuid4()),  # Уникальный ID запроса
-            title="Подбросить монетку",  # Заголовок
-            input_message_content=InputTextMessageContent("Подбрасываем монетку... 🪙")  # Текст ответа
-        ))
-
-        # Отправляем инлайн-результаты
-        await update.inline_query.answer(results, cache_time=0)
-        logger.info("Отправлен ответ на инлайн-запрос")
-
+        if query.lower() == "монетка":
+            # Получаем случайный GIF
+            gif_url = await fetch_random_gif_url()
+            if gif_url:
+                # Создаем инлайн-результат
+                results = [
+                    InlineQueryResultArticle(
+                        id=str(uuid.uuid4()),  # Уникальный идентификатор
+                        title="Подбросить монетку",
+                        input_message_content=InputTextMessageContent(
+                            "Подбрасываем монетку... 🪙", parse_mode="HTML"
+                        ),
+                        thumb_url=gif_url,  # Превью гифки
+                        description="Подбросьте монетку"
+                    )
+                ]
+                # Отправляем инлайн-результат
+                await update.inline_query.answer(results, cache_time=0)
+            else:
+                # Ответ если нет гифки
+                await update.inline_query.answer([])
     except Exception as e:
-        logger.error(f"Ошибка при обработке inline запроса: {e}")
-        await update.inline_query.answer([])  # Пустой ответ в случае ошибки
+        logger.error(f"Ошибка при обработке inline-запроса: {e}")
 
 async def handle_coin_flip_message(update: Update, context: CallbackContext):
     """Обрабатываем сообщение с текстом 'Подбрасываем монетку...'"""
@@ -93,7 +94,7 @@ def main():
 
     # Добавляем обработчики
     application.add_handler(CommandHandler("start", start))
-    application.add_handler(InlineQueryHandler(inline_query))  # Обработчик инлайн-запросов
+    application.add_handler(InlineQueryHandler(inline_query))  # Обработчик инлайн-запроса
     application.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, handle_coin_flip_message))
 
     # Запуск бота
