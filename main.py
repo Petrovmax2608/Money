@@ -17,7 +17,6 @@ from telegram.ext import (
     CallbackContext,
 )
 
-
 logging.basicConfig(format="%(asctime)s - %(name)s - %(levelname)s - %(message)s", level=logging.INFO)
 logger = logging.getLogger(__name__)
 
@@ -41,9 +40,11 @@ async def inline_query(update: Update, context: CallbackContext):
     """Обработка inline-запросов"""
     try:
         query = update.inline_query.query
+        logger.info(f"Получен инлайн-запрос: {query}")  # Логируем запрос
         results = []
 
         if query:  # Если есть запрос
+            # Отправляем результат для инлайн-кнопки
             results.append(InlineQueryResultArticle(
                 id=str(uuid.uuid4()),  # Уникальный ID запроса
                 title="Подбросить монетку",  # Заголовок
