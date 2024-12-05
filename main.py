@@ -22,7 +22,6 @@ logging.basicConfig(format="%(asctime)s - %(name)s - %(levelname)s - %(message)s
 logger = logging.getLogger(__name__)
 
 # Giphy API
-# Giphy API
 GIPHY_API_KEY = "ebUU78UvD6s5vr09ODs1qGdEsAvAyFfc"
 GIPHY_RANDOM_URL = f"https://api.giphy.com/v1/gifs/random?api_key={GIPHY_API_KEY}&tag=coin&rating=g"
 
@@ -49,6 +48,7 @@ async def fetch_random_gif_url():
         logger.error(f"Ошибка при запросе к Giphy API: {e}")
         return None
 
+
 async def inline_query(update: Update, context: CallbackContext):
     """Обработка inline-запросов"""
     try:
@@ -67,6 +67,7 @@ async def inline_query(update: Update, context: CallbackContext):
         logger.error(f"Ошибка при обработке inline-запроса: {e}")
         await update.inline_query.answer([])
 
+
 async def handle_coin_flip_message(update: Update, context: CallbackContext):
     """Обрабатываем сообщение с текстом 'Подбрасываем монетку...'"""
     if update.message.text.strip() == "Подбрасываем монетку... 🪙":
@@ -83,9 +84,11 @@ async def handle_coin_flip_message(update: Update, context: CallbackContext):
             logger.error(f"Ошибка при отправке результата: {e}")
             await update.message.reply_text("Произошла ошибка при подбрасывании монетки. Попробуйте снова.")
 
+
 async def start(update: Update, context: CallbackContext):
     """Обработка команды /start"""
     await update.message.reply_text("Введи @<имя_бота>, чтобы подбросить монетку.")
+
 
 def main():
     """Основная функция для запуска бота"""
@@ -96,6 +99,7 @@ def main():
     application.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, handle_coin_flip_message))
 
     application.run_polling()
+
 
 if __name__ == "__main__":
     main()
