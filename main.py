@@ -74,7 +74,7 @@ async def inline_query(update: Update, context: CallbackContext):
 
 async def handle_coin_flip_message(update: Update, context: CallbackContext):
     """Обрабатываем сообщение с текстом 'Подбрасываем монетку...'"""
-    if update.message.text == "Подбрасываем монетку... 🪙":
+    if update.message.text.strip() == "Подбрасываем монетку... 🪙":
         try:
             # Получаем случайную GIF
             gif_url = await fetch_random_gif_url()
@@ -90,6 +90,7 @@ async def handle_coin_flip_message(update: Update, context: CallbackContext):
             await update.message.reply_text(f"Монетка говорит: {result}!")
         except Exception as e:
             logger.error(f"Ошибка при отправке результата: {e}")
+            await update.message.reply_text("Произошла ошибка при подбрасывании монетки. Попробуйте снова.")
 
 async def start(update: Update, context: CallbackContext):
     """Обработка команды /start"""
