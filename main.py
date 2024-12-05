@@ -2,9 +2,9 @@ from telegram import Update, InlineQueryResultPhoto
 from telegram.ext import ApplicationBuilder, CommandHandler, InlineQueryHandler, CallbackContext
 import random
 
-# Укажите пути к изображениям
-YES_IMAGE = "yes.png"
-NO_IMAGE = "no.png"
+# Укажите правильные URL для изображений из вашего репозитория GitHub
+YES_IMAGE = "https://github.com/Petrovmax2608/Money/blob/main/yes.png?raw=true"
+NO_IMAGE = "https://github.com/Petrovmax2608/Money/blob/main/no.png?raw=true"
 
 async def inline_query(update: Update, context: CallbackContext):
     """Обработка inline-запросов"""
