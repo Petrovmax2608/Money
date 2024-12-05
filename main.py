@@ -46,10 +46,10 @@ async def inline_query(update: Update, context: CallbackContext):
         if not query:
             await update.inline_query.answer([])
             return
-        
+
         results = []
         
-        # Отправляем результат для инлайн-кнопки
+        # Заготовим результат для инлайн-запроса
         results.append(InlineQueryResultArticle(
             id=str(uuid.uuid4()),  # Уникальный ID запроса
             title="Подбросить монетку",  # Заголовок
