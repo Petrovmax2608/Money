@@ -20,9 +20,12 @@ import asyncio
 logging.basicConfig(format="%(asctime)s - %(name)s - %(levelname)s - %(message)s", level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-# URL для заблюренных изображений
+# URL для изображений
 YES_IMAGE = "https://nklk.ru/dll_image/4738.png"
 NO_IMAGE = "https://nklk.ru/dll_image/4739.png"
+
+# URL для GIF-анимации вращения монеты
+COIN_FLIP_GIF = "https://media.giphy.com/media/3o6Zt481isNVuQI1l6/giphy.gif"
 
 async def inline_query(update: Update, context: CallbackContext):
     """Обработка inline-запросов"""
@@ -47,6 +50,12 @@ async def handle_coin_flip_message(update: Update, context: CallbackContext):
     """Обрабатываем сообщение с текстом 'Подбрасываем монетку...'"""
     if update.message.text == "Подбрасываем монетку... 🪙":
         try:
+            # Отправляем GIF вращения монеты
+            await update.message.reply_animation(
+                animation=COIN_FLIP_GIF,
+                caption="Крутим монетку... 🌀"
+            )
+
             # Задержка перед отправкой результата
             await asyncio.sleep(1)
 
@@ -55,7 +64,7 @@ async def handle_coin_flip_message(update: Update, context: CallbackContext):
             image_url = YES_IMAGE if result == "yes" else NO_IMAGE
             title = "Да" if result == "yes" else "Нет"
 
-            # Отправляем картинку с результатом
+            # Отправляем результат с изображением
             await update.message.reply_photo(
                 photo=image_url,
                 caption=f"<b>Монетка говорит:</b> {title}!",
