@@ -22,8 +22,10 @@ logging.basicConfig(format="%(asctime)s - %(name)s - %(levelname)s - %(message)s
 logger = logging.getLogger(__name__)
 
 # Giphy API
-GIPHY_API_KEY = "YOUR_GIPHY_API_KEY"  # Рекомендуется использовать переменные окружения
+# Giphy API
+GIPHY_API_KEY = "ebUU78UvD6s5vr09ODs1qGdEsAvAyFfc"
 GIPHY_RANDOM_URL = f"https://api.giphy.com/v1/gifs/random?api_key={GIPHY_API_KEY}&tag=coin&rating=g"
+
 
 async def fetch_random_gif_url():
     """Получить случайный GIF через API Giphy"""
@@ -87,7 +89,7 @@ async def start(update: Update, context: CallbackContext):
 
 def main():
     """Основная функция для запуска бота"""
-    application = ApplicationBuilder().token("YOUR_BOT_API_TOKEN").build()
+    application = ApplicationBuilder().token("7919456091:AAHMc4yNQDvyh_nuTH8MdIiGM-8werbXuNE").build()
 
     application.add_handler(CommandHandler("start", start))
     application.add_handler(InlineQueryHandler(inline_query))
